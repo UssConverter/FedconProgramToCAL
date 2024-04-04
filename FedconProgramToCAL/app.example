@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <appSettings>
+    <!-- 
+      string variable = ConfigurationManager.AppSettings["KEYNAME"];
+      <add key="KEYNAME" value="VALUE" /> 
+      -->
+    <add key="dbFileName" value="Data Source=mydatabase.db" />
+    <add key="programUrl" value="https://downloads.fedconevents.com/images/pdf/fedcon-programm.pdf" />
+  </appSettings>
+</configuration>
