@@ -30,7 +30,7 @@ namespace FedconProgramToCAL
             [Display(Name = "Haydn")]
             Haydn = 2,
 
-            [Display(Name = "Arndt - Fotosessions")]
+            [Display(Name = "Arndt-Fotosessions")]
             Arndt_Fotosessions = 3
         }
 

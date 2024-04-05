@@ -69,7 +69,7 @@ namespace FedconProgramToCAL
                         .Replace("{DTSTART}", icalDTstart)
                         .Replace("{DTEND}", icalDTend)
                         .Replace("{DTSTAMP}", icalDTstamp)
-                        .Replace("{UID}", RemoveSpacesAndSpecialChars(Termin.Title));
+                        .Replace("{UID}", RemoveSpacesAndSpecialChars(Termin.Room)+"-"+RemoveSpacesAndSpecialChars(Termin.Title));
 
                     switch (Termin.Room)
                     {
@@ -82,7 +82,7 @@ namespace FedconProgramToCAL
                         case "Haydn":
                             icalWriterHaydn.WriteLine(icalEvent);
                             break;
-                        case "Arndt - Fotosessions":
+                        case "Arndt-Fotosessions":
                             icalWriterArndt.WriteLine(icalEvent);
                             break;
                     }
