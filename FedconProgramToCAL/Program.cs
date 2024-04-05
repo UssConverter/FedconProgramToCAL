@@ -32,14 +32,16 @@ namespace FedconProgramToCAL
             ImageFormat format = ImageFormat.Bmp;
             string fileExtension = format.ToString().ToLower();
 
-            /*downloadProgram(programUrl, programPdfSourceFile);
+            Directory.CreateDirectory(tempfolder);
+
+            downloadProgram(programUrl, programPdfSourceFile);
             await convertPdfToImage(programPdfSourceFile, tempfolder, dpi, format, fileExtension);
             extractTables(tempfolder, fileExtension, dpi);
             extractColumns(tempfolder, fileExtension, dpi);
             extractSlots(tempfolder, fileExtension, dpi);
-            runOCR(tempfolder);*/
-            //CreateEvents();
-            //updateDuration();
+            runOCR(tempfolder);
+            CreateEvents();
+            updateDuration();
             writeICAL(tempfolder);
         }
     }

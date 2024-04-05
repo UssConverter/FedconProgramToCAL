@@ -28,7 +28,15 @@ namespace FedconProgramToCAL
                 {
                     DateOnly currentDay = firstDay;
                     // remove line breaks, | and space from the start
-                    string input = rawEvent.RawText.Replace("\r\n", " ").Replace("|", "").Replace("{", "").Replace("}", "").TrimStart();
+                    string input = rawEvent.RawText;
+                    // fix [E]
+                    //input = Regex.Replace(input, @"\[E.{0,2}(?:\s|$)", "[E] ");
+                    input = Regex.Replace(input, @"(\|E\])|(\]E\|)|(\[IE\])|(\[EI\])|(\[EI)|(\[E\|)|(\|E\|)|(IE\])", " [E] ");
+
+                    // fix strange chars...
+                    input = Regex.Replace(input, @"\[(?![ED])", "");
+
+                    input = input.Replace("\r\n", " ").Replace("|", " ").Replace("{", " ").Replace("}", " ").TrimStart();
 
                     // remove additional times from string
                     Regex regexTimes = new Regex(@"\b(\d{2}:\d{2})");
@@ -45,12 +53,6 @@ namespace FedconProgramToCAL
 
                     // reduce multiple spaces to one
                     input = Regex.Replace(input, @"\s+", " ");
-
-                    // fix [E]
-                    input = Regex.Replace(input, @"\[E.{0,2}(?:\s|$)", "[E]");
-
-                    // fix strange chars...
-                    input = Regex.Replace(input, @"\[(?![ED])", "");
 
                     //extract time and text
                     Regex regexInfo = new Regex(@"(\d{2}:\d{2})\s*(.*)");
@@ -79,6 +81,10 @@ namespace FedconProgramToCAL
                             timeString = dateTime.ToString("dd.MM.yyyy HH:mm");
                         }
                         string title = (string.IsNullOrEmpty(followingString) ? "Default" : followingString);
+                        // remove wrong ocr time
+                        title = Regex.Replace(title, @"(?:\d+\/:\d+|\d+:\d+)", " ");
+                        title = Regex.Replace(title, @"^\s*-\s*", "");
+
                         if (title.Contains("MEET & GREETS") || title.Contains("Preise für Gruppenshoots"))
                         {
                             title =  "Default";
