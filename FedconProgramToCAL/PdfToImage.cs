@@ -17,12 +17,12 @@ namespace FedconProgramToCAL
 {
     internal class PdfToImage
     {
-        public static async Task convertPdfToImage(string programPdfSourceFile, string imageDestinationFolder)
+        public static async Task convertPdfToImage(string programPdfSourceFile, string imageDestinationFolder, int dpi, ImageFormat format, string fileExtension)
         {
             Directory.CreateDirectory(imageDestinationFolder);
-            
+
             double A4withAt100dpi = 2480.00/300;
-            uint destinationWidth = (uint)(A4withAt100dpi * 600);
+            uint destinationWidth = (uint)(A4withAt100dpi * dpi);
 
             StorageFile file = await StorageFile.GetFileFromPathAsync(programPdfSourceFile);
             PdfDocument doc = await Windows.Data.Pdf.PdfDocument.LoadFromFileAsync(file);
@@ -38,7 +38,7 @@ namespace FedconProgramToCAL
                     await page.RenderToStreamAsync(stream, renderOptions);
                     using (var image = new Bitmap(stream.AsStream()))
                     {
-                        image.Save(imageDestinationFolder + @"\" + i + ".bmp", ImageFormat.Bmp);
+                        image.Save(imageDestinationFolder + @"\" + i + "." + fileExtension, ImageFormat.Bmp);
                     }
                 }
             }

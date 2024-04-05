@@ -17,12 +17,12 @@ namespace FedconProgramToCAL
 {
     internal class CropImageToColumns
     {
-        public static void extractColumns(string tempfolder)
+        public static void extractColumns(string tempfolder, string fileExtension, int dpi)
         {
             bool debug = false;
             string outputFolder = tempfolder + @"\days";
 
-            List<string> pages = new List<string>(Directory.GetFiles(tempfolder + @"\", "*.bmp"));
+            List<string> pages = new List<string>(Directory.GetFiles(tempfolder, "*." + fileExtension));
 
             // Crop Image to colums
             foreach (var page in pages)
@@ -47,7 +47,9 @@ namespace FedconProgramToCAL
                 }
 
                 // run higes line detection, to get lines
-                LineSegment2D[] lines = CvInvoke.HoughLinesP(edges, 1, Math.PI / 180, 25, 1200, 3);
+                double minLineLenght = 2 * dpi;
+                double maxGap = 0.005 * dpi;
+                LineSegment2D[] lines = CvInvoke.HoughLinesP(edges, 1, Math.PI / 180, 25, minLineLenght, maxGap);
 
                 if (debug) debugDrawLines(image, lines, DisplayDirection.VerticalOnly);
                 
@@ -61,10 +63,11 @@ namespace FedconProgramToCAL
                 }
 
                 // remove duplicates
-                List<int> distinctValX = RemoveAlmostDuplicates(valX, 5);
+                List<int> distinctValX = RemoveAlmostDuplicates(valX, 5*2);
 
                 // remove the line at the start and at the end
-                distinctValX = distinctValX.Where(n => n >= 25 && n <= pageInfo.Width-25).ToList();
+                double pageMargin = 0.083333 * dpi;
+                distinctValX = distinctValX.Where(n => n >= (int)pageMargin && n <= pageInfo.Width-(int)pageMargin).ToList();
 
                 // Sort Points by X Coordinate Value
                 distinctValX.Sort();

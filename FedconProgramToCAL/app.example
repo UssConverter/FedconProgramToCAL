@@ -7,5 +7,6 @@
       -->
     <add key="dbFileName" value="Data Source=mydatabase.db" />
     <add key="programUrl" value="https://downloads.fedconevents.com/images/pdf/fedcon-programm.pdf" />
+    <add key="tessdataDir" value="C:\Program Files\Tesseract-OCR\tessdata" />
   </appSettings>
 </configuration>

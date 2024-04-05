@@ -16,11 +16,11 @@ namespace FedconProgramToCAL
 {
     internal class CropImageToTable
     {
-        public static void extractTables(string tempfolder)
+        public static void extractTables(string tempfolder, string fileExtension, int dpi)
         {
             bool debug = false;
 
-            List<string> pages = new List<string>(Directory.GetFiles(tempfolder, "*.bmp"));
+            List<string> pages = new List<string>(Directory.GetFiles(tempfolder, "*." + fileExtension));
 
             // find the table outline and crop the image - replacing the original page extract
             foreach (var page in pages)
@@ -44,12 +44,14 @@ namespace FedconProgramToCAL
 
                 if (debug)
                 {
-                    CvInvoke.Imshow("Canny", edges);
-                    CvInvoke.WaitKey();
+                    //CvInvoke.Imshow("Canny", edges);
+                    //CvInvoke.WaitKey();
                 }
 
                 // run higes line detection, to get horizontal lines
-                LineSegment2D[] lines = CvInvoke.HoughLinesP(edges, 1, Math.PI / 180, 25, 3400, 15);
+                double minLineLenghtV = 5.6666 * dpi;
+                double maxGapV = 0.025 * dpi;
+                LineSegment2D[] lines = CvInvoke.HoughLinesP(edges, 1, Math.PI / 180, 25, (int)minLineLenghtV, (int)maxGapV );
                 if (debug) debugDrawLines(image, lines, DisplayDirection.All);
                 
                 // Add the line point to lists for manipulation
@@ -88,12 +90,14 @@ namespace FedconProgramToCAL
 
                 if (debug)
                 {
-                    CvInvoke.Imshow("Canny", edges);
-                    CvInvoke.WaitKey();
+                    //CvInvoke.Imshow("Canny", edges);
+                    //CvInvoke.WaitKey();
                 }
 
                 // run higes line detection, to get horizontal lines
-                lines = CvInvoke.HoughLinesP(edges, 1, Math.PI / 180, 25, 1100, 15);
+                double minLineLenghtH = 1.8333 * dpi;
+                double maxGapH = 0.025 * dpi;
+                lines = CvInvoke.HoughLinesP(edges, 1, Math.PI / 180, 25, minLineLenghtH, maxGapH);
 
                 if (debug) debugDrawLines(image, lines, DisplayDirection.All);
                 

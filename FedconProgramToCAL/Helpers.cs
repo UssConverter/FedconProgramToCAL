@@ -90,7 +90,18 @@ namespace FedconProgramToCAL
 
             return result;
         }
-
+        public static string RemoveSpacesAndSpecialChars(string input)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in input)
+            {
+                if (char.IsLetterOrDigit(c)) // Checks if the character is a letter or digit
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
         public static System.Drawing.Point TupleToPoint(Tuple<int, int> tuple)
         {
             return new System.Drawing.Point(tuple.Item1, tuple.Item2);
@@ -108,7 +119,7 @@ namespace FedconProgramToCAL
             // Draw detected lines on the original image
             foreach (LineSegment2D line in lines)
             {
-                if (direction == DisplayDirection.VerticalOnly || direction == DisplayDirection.All)
+                if (direction == DisplayDirection.VerticalOnly)
                 {
                     if (Math.Abs(line.P1.X - line.P2.X) < 5) // Assuming vetical lines have small angle difference - offset between start and endpoint
                     {
@@ -116,13 +127,20 @@ namespace FedconProgramToCAL
                         c++;
                     }
                 }
-                if (direction == DisplayDirection.HorizontalOnly || direction == DisplayDirection.All)
+                if (direction == DisplayDirection.HorizontalOnly)
                 {
                     if (Math.Abs(line.P1.X - line.P2.X) < 5) // Assuming vetical lines have small angle difference - offset between start and endpoint
                     {
                         debugDrawLinesOutput(image, line);
                         c++;
                     }
+                }
+                if (direction == DisplayDirection.All)
+                {
+
+                    debugDrawLinesOutput(image, line);
+                    c++;
+
                 }
             }
             Console.WriteLine("Anzahl Linien: " + c.ToString());

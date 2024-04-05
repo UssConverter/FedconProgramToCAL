@@ -17,7 +17,7 @@ namespace FedconProgramToCAL
 {
     internal class CropImageToSlot
     {
-        public static void extractSlots(string tempfolder)
+        public static void extractSlots(string tempfolder, string fileExtension, int dpi)
         {
             bool debug = false;
 
@@ -27,7 +27,7 @@ namespace FedconProgramToCAL
                 string currDir = tempfolder + "\\days\\" + d;
 
                 // get images in folder
-                List<string> columns = new List<string>(Directory.GetFiles(currDir));
+                List<string> columns = new List<string>(Directory.GetFiles(currDir, "*." + fileExtension));
 
                 // go through all column images of this day
                 foreach (var column in columns)
@@ -56,7 +56,9 @@ namespace FedconProgramToCAL
                     }
 
                     // run higes line detection, to get lines
-                    LineSegment2D[] lines = CvInvoke.HoughLinesP(edges, 2, Math.PI / 180, 50, 600, 3);
+                    double minLineLenght = 1 * dpi;
+                    double maxGap = 0.005 * dpi;
+                    LineSegment2D[] lines = CvInvoke.HoughLinesP(edges, 2, Math.PI / 180, 50, minLineLenght, maxGap);
 
                     if (debug) debugDrawLines(image, lines, DisplayDirection.All);                    
 
@@ -76,14 +78,18 @@ namespace FedconProgramToCAL
                     var mostCommonValue = tupleLineStart.GroupBy(t => t.Item1).OrderByDescending(g => g.Count()).First().Key;
 
                     // remove lines that start a little behind - this are the info boxes
-                    tupleLineStart.RemoveAll(t => t.Item1 > (mostCommonValue + 15) && t.Item1 < (mostCommonValue + 50));
+                    double mCLower = 0.025 * dpi;
+                    double mCUpper = 0.083333 * dpi;
+                    tupleLineStart.RemoveAll(t => t.Item1 > (mostCommonValue + (int)mCLower) && t.Item1 < (mostCommonValue + (int)mCUpper));
                     // remove lines that start at the top or bottom of the page
-                    tupleLineStart.RemoveAll(t => t.Item2 < 25 || t.Item2 > (pageInfo.Height - 25));
+                    double pageMargin = 0.083333 * dpi;
+                    tupleLineStart.RemoveAll(t => t.Item2 < (int)pageMargin || t.Item2 > (pageInfo.Height - (int)pageMargin));
                     // sorting
                     tupleLineStart = tupleLineStart.OrderBy(t => t.Item2).ToList();
 
                     // remove points that are to close together
-                    List<Tuple<int, int>> distinctTuples = RemoveAlmostDuplicates(tupleLineStart, 25);
+                    double sameMargin = 0.083333 * dpi;
+                    List<Tuple<int, int>> distinctTuples = RemoveAlmostDuplicates(tupleLineStart, (int)sameMargin);
                     distinctTuples = distinctTuples.OrderBy(t => t.Item2).ToList();
 
                     if (debug)
@@ -101,7 +107,7 @@ namespace FedconProgramToCAL
                     for (int e = 0; e <= distinctTuples.Count; e++)
                     {
                         // file name will be number only for easy sorting later
-                        string newName = roomDir + "\\" + (e + 1).ToString() + Path.GetExtension(column);
+                        string newName = roomDir + "\\" + e.ToString() + Path.GetExtension(column);
 
                         // calculate crop size
                         int startY = 0;
@@ -127,7 +133,10 @@ namespace FedconProgramToCAL
                         using (MagickImage cropEvent = new MagickImage(column))
                         {
                             cropEvent.Crop(new MagickGeometry(0, startY, width, height));
+                            //cropEvent.ColorType = ColorType.Grayscale;
+                            cropEvent.Resize(new Percentage(500));
                             cropEvent.Write(newName);
+                            Console.WriteLine(newName);
                         }
                     }
                 }
