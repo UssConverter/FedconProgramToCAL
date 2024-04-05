@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static FedconProgramToCAL.DataModel;
+using static FedconProgramToCAL.Helpers;
 
 
 namespace FedconProgramToCAL
@@ -62,8 +63,9 @@ namespace FedconProgramToCAL
                         string followingString = matchInfo.Groups[2].Value.Trim();
 
                         // Output the extracted time and following string
-                        int roomId = int.Parse(rawEvent.Raum);
-                        var room = (DataModel.Room)roomId;
+                        int room = int.Parse(rawEvent.Raum);
+                        //var room = (DataModel.Room)roomId;
+                        string roomName = GetDisplayName((Room)room);
 
                         int dayId = int.Parse(rawEvent.Tag);
                         var day = (DataModel.Day)dayId;
@@ -98,7 +100,7 @@ namespace FedconProgramToCAL
 
                             // Add data
                             dbContextAdd.Termine.Add(
-                                new Termin { Title = title, Room = room.ToString(), Start = timeString, Duration = 99, StartTimestamp = dateTime, Day = day.ToString() }
+                                new Termin { Title = title, Room = roomName.ToString(), Start = timeString, Duration = 99, StartTimestamp = dateTime, Day = day.ToString() }
                                 );
                             dbContextAdd.SaveChanges();
                         }

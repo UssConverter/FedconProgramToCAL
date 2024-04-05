@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static FedconProgramToCAL.DataModel;
+using static FedconProgramToCAL.Helpers;
 
 namespace FedconProgramToCAL
 {
@@ -17,8 +18,10 @@ namespace FedconProgramToCAL
                 {
                     foreach (Room room in Enum.GetValues(typeof(Room)))
                     {
+                        string roomName = GetDisplayName((Room)room);
+
                         var entries = dbContext.Termine
-                         .Where(e => e.Room == room.ToString())
+                         .Where(e => e.Room == roomName.ToString())
                          .Where(e => e.Day == day.ToString())
                          .OrderBy(e => e.StartTimestamp)
                          .ToList();

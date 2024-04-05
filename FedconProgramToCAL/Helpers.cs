@@ -3,7 +3,9 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static FedconProgramToCAL.DataModel;
@@ -12,6 +14,12 @@ namespace FedconProgramToCAL
 {
     internal class Helpers
     {
+        public static string GetDisplayName(Enum value)
+        {
+            FieldInfo field = value.GetType().GetField(value.ToString());
+            DisplayAttribute attribute = (DisplayAttribute)field.GetCustomAttribute(typeof(DisplayAttribute));
+            return attribute?.Name ?? value.ToString();
+        }
         public static (int?, int?) FindClosestValues(List<int> list, int x)
         {
             if (list == null || list.Count == 0)
