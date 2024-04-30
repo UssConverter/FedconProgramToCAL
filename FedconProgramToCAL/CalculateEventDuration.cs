@@ -45,7 +45,7 @@ namespace FedconProgramToCAL
                                 lastEnd = new DateTime(entries.Last().StartTimestamp.Year, entries.Last().StartTimestamp.Month, entries.Last().StartTimestamp.Day, 22, 0, 0);
                                 break;
                             case "Sonntag":
-                                lastEnd = new DateTime(entries.Last().StartTimestamp.Year, entries.Last().StartTimestamp.Month, entries.Last().StartTimestamp.Day, 19, 0, 0);
+                                lastEnd = new DateTime(entries.Last().StartTimestamp.Year, entries.Last().StartTimestamp.Month, entries.Last().StartTimestamp.Day, 18, 0, 0);
                                 break;
                         }
 
